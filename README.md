@@ -20,10 +20,15 @@ and **Physical AI / robotics**.
 
 ## Typical flow
 
-1. `bom-teardown "AI data center optical"` → shortlist of bottleneck nodes/tickers.
-2. `bottleneck-dd $SIVE` → does the thesis hold? any fatal flaws? → watchlist verdict.
-3. `narrative-lag-scan $SIVE` → what's moving that consensus hasn't absorbed?
-4. `watchlist review` → what's stale or has a catalyst coming → re-run 2/3.
+1. `/bom-teardown AI data center optical` → shortlist of bottleneck nodes/tickers.
+2. `/bottleneck-dd <TICKER>` → does the thesis hold? fatal flaws? → watchlist verdict.
+3. `/narrative-lag-scan <TICKER>` → what's moving that consensus hasn't absorbed?
+4. `/watchlist review` → what's stale or has a catalyst coming → re-run 2/3.
+5. `/watchlist score` → grade graduated names at +90/+180d, so the method's own
+   hit rate gets measured (survivorship-bias guard), not assumed.
+
+(Tickers in the reference are *author inferences* — verify each; venues vary, e.g.
+Soitec is `SOI.PA` (Paris), not US `$SOI` which is now `SEI`.)
 
 ## Layout
 

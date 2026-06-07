@@ -1,42 +1,42 @@
 ---
 name: narrative-lag-scan
-description: Hunt leading indicators that move before the price — conference talks, partner/customer/ecosystem pages, supplier & foundry announcements, capacity expansions, job postings, product roadmaps, datasheets, qualification/sampling news, patents and government awards. Use when the user wants to find signals that institutions/sell-side haven't absorbed yet for a ticker or theme, or to refresh signals on a watchlist name. Estimates the absorption-lag window. NFA.
+description: Sweep leading indicators that move BEFORE the price for a named ticker/theme — conference talks, partner/customer pages, supplier & foundry announcements, capacity expansions, job postings, roadmaps, datasheets, qualification/sampling, patents, government awards — then judge whether sell-side has absorbed them and estimate the lag window. Use when the user wants recent signals/news on a name that consensus may not have priced. NFA.
+when_to_use: Use to find recent leading-indicator signals on a specific ticker/theme and gauge what's un-priced. Not for building a supply-chain map (bom-teardown) or full financial DD/verdict on a ticker (bottleneck-dd).
+argument-hint: "<ticker-or-theme> [since-date]"
+allowed-tools: WebSearch WebFetch Read Write Bash
 ---
 
 # Narrative-Lag Scan
 
-Implements habit #3 of the Serenity framework: conferences, partner pages,
-supplier announcements, hiring, and roadmaps change *first*; sell-side reacts
-*later*, and that window is the alpha. Read the "Narrative-lag source list" in
-`reference/serenity-framework.md`.
+Target: **$ARGUMENTS**
 
-## Inputs
-- A ticker, company, or theme (required). Optional: a "since" date to scan from
-  (default: last review date in `signals/<TICKER>.md`, else last 6 months).
+Implements habit #3 of the Serenity framework — signals change first, sell-side
+reacts later. **First read `reference/serenity-framework.md`** (relative to the ASBOM
+project root) for the source list and the cyclicality caveat. The "lag = alpha"
+premise is *asserted, not proven*, so every call gets a post-hoc check.
 
 ## Procedure
-1. **Sweep the leading-indicator sources** (WebSearch/WebFetch each; capture the
-   date and a primary-source link for every hit):
-   - Earnings calls / 10-Q/10-K/8-K supply-chain & capex commentary
-   - Conference talks & technical sessions (OFC, ISSCC, Hot Chips, GTC, SC, IEDM,
-     Space Symposium, etc.) relevant to the name
-   - Partner / customer / "ecosystem" pages on the company & its customers' sites
-   - Supplier / foundry / capacity-expansion announcements
-   - Job postings (roles that reveal roadmap & ramp)
-   - Product roadmaps, datasheets, qualification / sampling announcements
-   - Trade press / teardown reports; patents; government grants (CHIPS, DoD, NASA/ESA)
-2. **Log each new signal**: date · source (with link) · one-line what-it-implies ·
-   **fact vs. inference** tag · which BOM node/thesis it touches.
-3. **Assess absorption.** For each material signal, judge whether sell-side /
-   consensus has already reflected it (any analyst notes, price reaction, guidance
-   change?). Mark `un-priced` / `partially priced` / `priced`.
-4. **Estimate the lag window** — the gap between the leading signal and likely
-   broad recognition (next earnings, revenue inflection, index/coverage pickup).
-   Note the catalyst that would close it.
+0. **Ensure `signals/` exists** (`mkdir -p signals`). Default scan window: the last
+   review date in `signals/<TICKER>.md` if present, else last 6 months.
+1. **Sweep the leading-indicator sources** (WebSearch/WebFetch each; capture date +
+   primary-source link for every hit): filings/calls supply-chain & capex commentary;
+   relevant conference talks; partner/customer/ecosystem pages; supplier/foundry &
+   **capacity-expansion** announcements; job postings; roadmaps/datasheets/
+   qualification; trade press/teardowns; patents; gov grants.
+2. **Log each new signal:** date · source (link) · one-line implication · **fact vs.
+   inference** tag · which BOM node/thesis it touches.
+3. **Cyclicality flag.** A capacity-expansion signal is **bearish** for a tightness
+   thesis (today's tightness → next year's glut) — mark it as such, don't log it bullish.
+4. **Assess absorption.** For each material signal judge `un-priced` / `partially
+   priced` / `priced` (any analyst notes, price reaction, guidance change?).
+5. **Estimate the lag window** to broad recognition (next earnings, revenue inflection,
+   coverage pickup) + the catalyst that closes it.
+6. **Post-hoc check.** For prior signals in the log, did the signal actually precede
+   the move? Feed the answer to the outcomes ledger so the lag-alpha claim is tested.
 
 ## Output
-Append to `signals/<TICKER-or-theme-slug>.md` a dated scan block: the signal log
-table, the absorption assessment, and the lag-window estimate. Surface the top
-`un-priced` signals at the top. If a signal materially changes a thesis, note that
-the ticker's `watchlist.md` row and `research/<TICKER>.md` should be refreshed.
-Distinguish **fact** from **inference**. End with **NFA**.
+Append a dated scan block to `signals/<TICKER-or-theme-slug>.md`: the signal log
+table, the absorption assessment, the lag-window estimate, and the post-hoc results.
+Surface top `un-priced` signals first. If a signal materially changes a thesis, note
+that `watchlist.md` and `research/<TICKER>.md` need a refresh. Tag **fact vs.
+inference**. End with **NFA**.

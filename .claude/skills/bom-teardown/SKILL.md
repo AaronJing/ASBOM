@@ -1,41 +1,42 @@
 ---
 name: bom-teardown
-description: Tear down the supply-chain Bill of Materials upstream from a downstream end-market to find bottleneck nodes — the narrowest pipes where downstream spends huge capex but the upstream supplier is small-cap with no short-term substitute. Use when the user names an AI/space/robotics theme or end-market (e.g. "AI data center capex", "humanoid robots", "LEO constellations", "HBM", "CPO") and wants to map who controls the key parts, not who sells the shovels.
+description: Build a layered supply-chain Bill-of-Materials MAP upstream from a downstream end-market and rank candidate bottleneck nodes (the narrow pipes the market under-owns). Use when the user wants to MAP a supply chain's structure from scratch for an AI/space/robotics theme (e.g. "AI data center capex", "humanoid actuation", "LEO constellations", "HBM", "CPO") — who controls the key parts, not who sells shovels.
+when_to_use: Use to construct or refresh the supply-chain map and bottleneck shortlist for a theme. Do NOT use for recent news / leading indicators on a name (that is narrative-lag-scan) or for due diligence on one ticker (that is bottleneck-dd).
+argument-hint: "<theme-or-end-market>"
+allowed-tools: WebSearch WebFetch Read Write Bash
 ---
 
 # BOM Teardown
 
-Implements the top-down teardown from the Serenity framework. Read
-`reference/serenity-framework.md` first — it holds the BOM layer taxonomies for
-AI / space / robotics and the bottleneck-scoring rubric.
+Theme / end-market: **$ARGUMENTS**
 
-## Inputs
-- A theme or end-market (required). If vague, ask which of the three domains
-  (AI hardware, space, Physical AI) and how far upstream to go.
+Implements the top-down teardown from the Serenity framework. **First read
+`reference/serenity-framework.md`** (relative to the ASBOM project root — this skill
+assumes that working directory). It holds the BOM layer taxonomies, the *corrected*
+bottleneck-scoring rubric (do NOT use downstream$/market-cap), and the cyclicality
+note. If no theme was given, ask which of the three domains and how far upstream.
 
 ## Procedure
-1. **Anchor the downstream.** Quantify the capex/demand magnitude with current
-   data (WebSearch the latest hyperscaler capex guides, launch cadence, unit
-   forecasts). State the number and source. This is the "$100B downstream" anchor.
-2. **Decompose into BOM layers.** Use the matching taxonomy table in the reference
-   doc. For each layer, list the real players (tickers where public). Keep peeling
-   the layer that looks tightest one level deeper (e.g. optical → laser → InP
-   substrate → InP feedstock).
-3. **Score each node for bottleneck-ness** (1–5 each, note the evidence):
-   - *Downstream $ ÷ upstream market cap* (higher = narrower pipe)
-   - *Substitutability* (sole/dual-source vs. commodity; switching cost)
-   - *Lead time / capacity tightness* (qual time, fab/tool constraints)
-   - *Concentration* (few suppliers control the node)
-   - *Pricing power* (tiny % of system BOM but a hard gate)
-4. **Shortlist the narrowest pipes.** Pick the top 3–6 nodes. For each: one-line
-   bottleneck thesis, the closest small/mid-cap names, and the *milestone to watch*
-   (qualification / design win / capacity / customer mapping).
-5. **Flag what to verify next** — hand each candidate to `bottleneck-dd` for the
-   4-question gauntlet and red-flag screen.
+0. **Ensure `maps/` exists** (`mkdir -p maps`) before writing.
+1. **Anchor the downstream.** Quantify the capex/demand with current data
+   (WebSearch latest hyperscaler capex, launch cadence, unit forecasts). Cite it.
+2. **Decompose into BOM layers** using the matching taxonomy table. List real
+   players per layer (annotate listing venue — not everything is US-listed; verify
+   each ticker, they are author inferences). Keep peeling the tightest layer deeper.
+3. **Score each candidate node 1–5** on the framework's independent axes — **TAM
+   capture** (node revenue from this downstream ÷ that spend), **moat/replaceability**
+   (one combined axis), **pricing power**, **bottleneck durability/half-life**, and
+   **liquidity/investability**. Evidence per score. Weight TAM-capture + durability
+   highest. A high moat score with weak TAM capture or incoming glut = false positive.
+4. **Cyclicality check.** For each tightness thesis, note *announced* capacity
+   additions across all suppliers — broad expansion is a thesis-killer, not bullish.
+5. **Shortlist the narrowest, most durable pipes (3–6).** For each: one-line thesis,
+   closest small/mid-cap names (with venue), milestone to watch, and the single
+   biggest risk (incl. single-country/export-control exposure).
 
 ## Output
-Write `maps/<theme-slug>-<YYYY-MM-DD>.md` containing: the downstream anchor (with
-source), the layered table, the scored node ranking, and the shortlist with
-tickers + milestones. Then append/refresh the shortlisted tickers in
-`watchlist.md` (use the `watchlist` skill's schema; mark conviction as "candidate
-— needs DD"). Distinguish **fact** (filed/announced) from **inference**. End with **NFA**.
+Write `maps/<theme-slug>-<YYYY-MM-DD>.md`: the anchored downstream (sourced), the
+layered table, the scored ranking, and the shortlist. Append shortlisted names to
+`watchlist.md` (use the `watchlist` schema; conviction = `candidate — needs DD`).
+Tag **fact vs. inference** and **source `[S]` vs. author `[A]`**. Hand each candidate
+to `bottleneck-dd`. End with **NFA**.
